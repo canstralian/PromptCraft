@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { PromptWithDetails } from '@shared/schema';
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import { PromptWithDetails } from "@shared/schema";
 
 interface PromptContextType {
   isModalOpen: boolean;
@@ -13,7 +13,7 @@ const PromptContext = createContext<PromptContextType | undefined>(undefined);
 export const usePrompt = (): PromptContextType => {
   const context = useContext(PromptContext);
   if (!context) {
-    throw new Error('usePrompt must be used within a PromptProvider');
+    throw new Error("usePrompt must be used within a PromptProvider");
   }
   return context;
 };
@@ -24,7 +24,8 @@ interface PromptProviderProps {
 
 export const PromptProvider: React.FC<PromptProviderProps> = ({ children }) => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedPrompt, setSelectedPrompt] = useState<PromptWithDetails | null>(null);
+  const [selectedPrompt, setSelectedPrompt] =
+    useState<PromptWithDetails | null>(null);
 
   return (
     <PromptContext.Provider

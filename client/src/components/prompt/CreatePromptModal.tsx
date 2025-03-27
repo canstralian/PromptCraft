@@ -10,7 +10,8 @@ import PromptEditor from "./PromptEditor";
 import { usePrompt } from "@/contexts/PromptContext";
 
 export default function CreatePromptModal() {
-  const { isModalOpen, setModalOpen, selectedPrompt, setSelectedPrompt } = usePrompt();
+  const { isModalOpen, setModalOpen, selectedPrompt, setSelectedPrompt } =
+    usePrompt();
 
   const handleClose = () => {
     setModalOpen(false);
@@ -25,10 +26,10 @@ export default function CreatePromptModal() {
             {selectedPrompt ? "Edit Prompt" : "Create New Prompt"}
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="overflow-y-auto flex-1 p-1">
-          <PromptEditor 
-            promptId={selectedPrompt?.id} 
+          <PromptEditor
+            promptId={selectedPrompt?.id}
             onSave={handleClose}
             onCancel={handleClose}
           />

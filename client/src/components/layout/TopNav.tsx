@@ -28,7 +28,7 @@ export default function TopNav({ onMobileMenuToggle }: TopNavProps) {
       >
         <Menu className="h-5 w-5" />
       </button>
-      
+
       {/* Search Bar */}
       <div className="flex-1 max-w-2xl mx-4">
         <form onSubmit={handleSearch}>
@@ -36,8 +36,8 @@ export default function TopNav({ onMobileMenuToggle }: TopNavProps) {
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search className="h-4 w-4 text-gray-400" />
             </div>
-            <Input 
-              type="text" 
+            <Input
+              type="text"
               className="block w-full pl-10 pr-3 py-2 border border-accent rounded-lg bg-accent focus:bg-white"
               placeholder="Search for prompts, categories, or tags..."
               value={searchQuery}
@@ -46,16 +46,24 @@ export default function TopNav({ onMobileMenuToggle }: TopNavProps) {
           </div>
         </form>
       </div>
-      
+
       {/* Action Buttons */}
       <div className="flex items-center space-x-2">
-        <Button variant="ghost" size="icon" className="text-text hover:bg-accent rounded-lg">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-text hover:bg-accent rounded-lg"
+        >
           <Bell className="h-5 w-5" />
         </Button>
-        <Button variant="ghost" size="icon" className="text-text hover:bg-accent rounded-lg md:hidden">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-text hover:bg-accent rounded-lg md:hidden"
+        >
           <User className="h-5 w-5" />
         </Button>
-        <Button 
+        <Button
           onClick={() => setModalOpen(true)}
           className="hidden md:flex items-center justify-center px-4 py-2 bg-primary hover:bg-primary-light text-white rounded-lg transition-colors text-sm font-medium"
         >

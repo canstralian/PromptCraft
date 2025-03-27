@@ -56,29 +56,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validationResult = insertPromptSchema.safeParse(req.body);
       if (!validationResult.success) {
-        return res.status(400).json({ 
-          message: "Invalid prompt data", 
-          errors: validationResult.error.errors 
+        return res.status(400).json({
+          message: "Invalid prompt data",
+          errors: validationResult.error.errors,
         });
       }
 
       const prompt = await storage.createPrompt(validationResult.data);
-      
+
       // Handle tags if provided
       if (req.body.tags && Array.isArray(req.body.tags)) {
         for (const tagName of req.body.tags) {
           let tag = await storage.getTagByName(tagName);
-          
+
           // Create tag if it doesn't exist
           if (!tag) {
             tag = await storage.createTag({ name: tagName });
           }
-          
+
           // Add tag to prompt
           await storage.addTagToPrompt(prompt.id, tag.id);
         }
       }
-      
+
       const promptWithDetails = await storage.getPromptWithDetails(prompt.id);
       res.status(201).json(promptWithDetails);
     } catch (error) {
@@ -100,43 +100,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Prompt not found" });
       }
 
-      const validationResult = z.object({
-        title: z.string().optional(),
-        content: z.string().optional(),
-        categoryId: z.number().optional(),
-        isPublic: z.boolean().optional()
-      }).safeParse(req.body);
+      const validationResult = z
+        .object({
+          title: z.string().optional(),
+          content: z.string().optional(),
+          categoryId: z.number().optional(),
+          isPublic: z.boolean().optional(),
+        })
+        .safeParse(req.body);
 
       if (!validationResult.success) {
-        return res.status(400).json({ 
-          message: "Invalid prompt data", 
-          errors: validationResult.error.errors 
+        return res.status(400).json({
+          message: "Invalid prompt data",
+          errors: validationResult.error.errors,
         });
       }
 
-      const updatedPrompt = await storage.updatePrompt(id, validationResult.data);
-      
+      const updatedPrompt = await storage.updatePrompt(
+        id,
+        validationResult.data,
+      );
+
       // Handle tags if provided
       if (req.body.tags && Array.isArray(req.body.tags)) {
         // Get current tags for this prompt
         const currentTags = await storage.getTagsForPrompt(id);
-        const currentTagNames = currentTags.map(tag => tag.name);
-        
+        const currentTagNames = currentTags.map((tag) => tag.name);
+
         // Add new tags
         for (const tagName of req.body.tags) {
           if (!currentTagNames.includes(tagName)) {
             let tag = await storage.getTagByName(tagName);
-            
+
             // Create tag if it doesn't exist
             if (!tag) {
               tag = await storage.createTag({ name: tagName });
             }
-            
+
             // Add tag to prompt
             await storage.addTagToPrompt(id, tag.id);
           }
         }
-        
+
         // Remove tags that are no longer present
         for (const tag of currentTags) {
           if (!req.body.tags.includes(tag.name)) {
@@ -144,7 +149,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
       }
-      
+
       const promptWithDetails = await storage.getPromptWithDetails(id);
       res.json(promptWithDetails);
     } catch (error) {
@@ -190,25 +195,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get prompts by category
-  app.get("/api/categories/:id/prompts", async (req: Request, res: Response) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "Invalid category ID" });
-      }
+  app.get(
+    "/api/categories/:id/prompts",
+    async (req: Request, res: Response) => {
+      try {
+        const id = parseInt(req.params.id);
+        if (isNaN(id)) {
+          return res.status(400).json({ message: "Invalid category ID" });
+        }
 
-      const category = await storage.getCategory(id);
-      if (!category) {
-        return res.status(404).json({ message: "Category not found" });
-      }
+        const category = await storage.getCategory(id);
+        if (!category) {
+          return res.status(404).json({ message: "Category not found" });
+        }
 
-      const prompts = await storage.getPromptsByCategory(id);
-      res.json(prompts);
-    } catch (error) {
-      console.error("Error fetching prompts by category:", error);
-      res.status(500).json({ message: "Failed to fetch prompts by category" });
-    }
-  });
+        const prompts = await storage.getPromptsByCategory(id);
+        res.json(prompts);
+      } catch (error) {
+        console.error("Error fetching prompts by category:", error);
+        res
+          .status(500)
+          .json({ message: "Failed to fetch prompts by category" });
+      }
+    },
+  );
 
   // Get all tags
   app.get("/api/tags", async (req: Request, res: Response) => {
@@ -220,7 +230,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch tags" });
     }
   });
-  
+
   // Get prompts by tag
   app.get("/api/tags/:id/prompts", async (req: Request, res: Response) => {
     try {
@@ -247,9 +257,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validationResult = insertTagSchema.safeParse(req.body);
       if (!validationResult.success) {
-        return res.status(400).json({ 
-          message: "Invalid tag data", 
-          errors: validationResult.error.errors 
+        return res.status(400).json({
+          message: "Invalid tag data",
+          errors: validationResult.error.errors,
         });
       }
 
@@ -265,7 +275,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/ai/enhance", async (req: Request, res: Response) => {
     try {
       const { prompt } = req.body;
-      if (!prompt || typeof prompt !== 'string') {
+      if (!prompt || typeof prompt !== "string") {
         return res.status(400).json({ message: "Prompt text is required" });
       }
 
@@ -283,14 +293,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const schema = z.object({
         topic: z.string(),
         description: z.string().optional(),
-        category: z.string().optional()
+        category: z.string().optional(),
       });
 
       const validationResult = schema.safeParse(req.body);
       if (!validationResult.success) {
-        return res.status(400).json({ 
-          message: "Invalid generation data", 
-          errors: validationResult.error.errors 
+        return res.status(400).json({
+          message: "Invalid generation data",
+          errors: validationResult.error.errors,
         });
       }
 
